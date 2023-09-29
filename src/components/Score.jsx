@@ -1,4 +1,3 @@
-import React, { useEffect } from "react";
 import { FaEye } from "react-icons/fa";
 import { FaShareAlt } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa";
@@ -6,6 +5,7 @@ import { FaHome } from "react-icons/fa";
 import { MdOutlineReplay } from "react-icons/md";
 import leaderboard from "../assets/leaderboard.png";
 import arrow from "../assets/arrow.png";
+import React from "react";
 
 const Score = ({ setScreen }) => {
   return (

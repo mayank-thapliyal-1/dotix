@@ -2,7 +2,7 @@ import React from "react";
 import profilePic from "../assets/profile.png";
 import shuttle from "../assets/shuttle.png";
 import basketball from "../assets/basketball.png";
-import pillar from "../assets/Pillar.png";
+import pillar from "../assets/pillar.png";
 
 const Home = ({ setQuizApi, setScreen }) => {
   return (
