@@ -8,8 +8,13 @@ const App = ({}) => {
   const [screen, setScreen] = useState("home");
   const [quizData, setQuizData] = useState([]);
   const [quizOptions, setQuizOptions] = useState([]);
-  const [quizApi, setQuizApi] = useState("")
-  
+  const [quizApi, setQuizApi] = useState("");
+  const [right, setRight] = useState(0);
+  const [wrong, setWrong] = useState(0);
+  const resetScores = () => {
+    setRight(0);
+    setWrong(0);
+  };
   const Fetchdata = async (url) => {
     try {
       const res = await fetch(url);
@@ -25,7 +30,6 @@ const App = ({}) => {
       });
       setQuizData(data.results);
       setQuizOptions(options);
-      
     } catch (error) {
       console.log(error);
     }
@@ -36,15 +40,28 @@ const App = ({}) => {
 
   return (
     <div className="">
-      {screen === "home" && <Home setQuizApi={setQuizApi} setScreen={setScreen} />}
+      {screen === "home" && (
+        <Home setQuizApi={setQuizApi} setScreen={setScreen} />
+      )}
       {screen === "test" && (
         <Test
           quizData={quizData}
           quizOptions={quizOptions}
           setScreen={setScreen}
+          setRight={setRight}
+          setWrong={setWrong}
+          right={right}
+          wrong={wrong}
         />
       )}
-      {screen === "score" && <Score setScreen={setScreen} />}
+      {screen === "score" && (
+        <Score
+          setScreen={setScreen}
+          right={right}
+          wrong={wrong}
+          resetScores={resetScores}
+        />
+      )}
       {screen === "leaderboard" && <Leaderboard setScreen={setScreen} />}
     </div>
   );

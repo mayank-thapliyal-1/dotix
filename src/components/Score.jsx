@@ -5,9 +5,25 @@ import { FaHome } from "react-icons/fa";
 import { MdOutlineReplay } from "react-icons/md";
 import leaderboard from "../assets/leaderboard.png";
 import arrow from "../assets/arrow.png";
-import React from "react";
+import React, { useState,useEffect } from "react";
 
-const Score = ({ setScreen }) => {
+const Score = ({ setScreen,right,wrong,resetScores}) => {
+  const [correct, setCorrect] = useState(right);
+  const [wg,setWg] = useState(wrong);
+
+  const attempts = ((correct + wg) / 10) * 100;
+  const score = correct * 10;
+
+  useEffect(() => {
+    // Reset scores after 1 second
+    const timer = setTimeout(() => {
+      resetScores(); // This should update right & wrong in the parent component
+    }, 1000);
+
+    return () => clearTimeout(timer); // Cleanup timer
+  }, []); 
+
+
   return (
     <div>
       <div id="Score" className=" h-screen">
@@ -31,7 +47,7 @@ const Score = ({ setScreen }) => {
               </h1>
               <div className="flex justify-center items-center">
                 {" "}
-                <h1 className="text-primary font-bold text-3xl">100</h1>
+                <h1 className="text-primary font-bold text-3xl">{score}</h1>
                 <h1 className="relative text-xl font-semibold text-primary top-2">
                   pt
                 </h1>{" "}
@@ -44,7 +60,7 @@ const Score = ({ setScreen }) => {
           <div className="flex flex-col ">
             <div className="flex items-center gap-2">
               <div className="bg-primary h-3 w-3 rounded-full"></div>
-              <span className="text-primary text-2xl ">100%</span>
+              <span className="text-primary text-2xl ">{attempts}%</span>
             </div>
             <span className="text-lg pl-4">Completion</span>
           </div>
@@ -58,14 +74,14 @@ const Score = ({ setScreen }) => {
           <div className="flex flex-col ">
             <div className="flex items-center gap-2">
               <div className="bg-[#1F8435] h-3 w-3 rounded-full"></div>
-              <span className=" text-[#1F8435] text-2xl">03</span>
+              <span className=" text-[#1F8435] text-2xl">{correct}</span>
             </div>
             <span className="text-lg pl-4">Correct</span>
           </div>
           <div className="flex flex-col ">
             <div className="flex items-center gap-2">
               <div className="bg-[#FA3939] h-3 w-3 rounded-full"></div>
-              <span className="text-[#FA3939] text-2xl">07</span>
+              <span className="text-[#FA3939] text-2xl">{wg}</span>
             </div>
             <span className="text-lg pl-4">Wrong</span>
           </div>
@@ -73,47 +89,47 @@ const Score = ({ setScreen }) => {
         <div className="  grid grid-cols-3 grid-rows-2 gap-3  p-4 py-6 justify-center items-center h-fit">
           <div className="flex flex-col justify-center  items-center pb-5">
             {" "}
-            <div className=" text-white bg-secondary h-14 w-14 rounded-full  flex justify-center items-center ">
+            <div className=" text-white bg-secondary h-14 w-14 rounded-full  flex justify-center items-center  ">
               <button onClick={() => setScreen("test")}>
                 {" "}
-                <MdOutlineReplay className="text-4xl " />
+                <MdOutlineReplay className="text-4xl cursor-pointer " />
               </button>
             </div>
             <div className="pt-2 ">Play Again</div>
           </div>
           <div className="flex flex-col justify-center  items-center pb-5">
             {" "}
-            <div className="text-white bg-primary h-14 w-14 rounded-full  flex justify-center items-center">
-              <FaEye className="text-3xl" />
+            <div className="text-white bg-primary h-14 w-14 rounded-full  flex justify-center items-center ">
+              <FaEye className="text-3xl cursor-pointer" />
             </div>
             <div className="pt-2">Review Answer</div>
           </div>
-          <div className="flex flex-col justify-center  items-center pb-5">
+          <div className="flex flex-col justify-center  items-center pb-5 ">
             {" "}
             <div className="text-white bg-primary h-14 w-14 rounded-full  flex justify-center items-center">
-              <FaShareAlt className="text-3xl" />{" "}
+              <FaShareAlt className="text-3xl cursor-pointer" />{" "}
             </div>
             <div className="pt-2">Share Score</div>
           </div>
-          <div className="flex flex-col justify-center  items-center pt-5">
+          <div className="flex flex-col justify-center  items-center pt-5 ">
             <div className="text-white bg-primary h-14 w-14 rounded-full  flex justify-center items-center">
-              <FaFilePdf className="text-2xl" />
+              <FaFilePdf className="text-2xl cursor-pointer" />
             </div>
             <div className="pt-2">Genrate Pdf</div>
           </div>
-          <div className="flex flex-col justify-center  items-center pt-5">
+          <div className="flex flex-col justify-center  items-center pt-5 ">
             <div className="text-white bg-primary h-14 w-14 rounded-full  flex justify-center items-center">
               <button onClick={() => setScreen("home")}>
-                <FaHome className="text-3xl" />
+                <FaHome className="text-3xl cursor-pointer" />
               </button>
             </div>{" "}
             <div className="pt-2">Home</div>
           </div>
-          <div className="flex flex-col justify-center  items-center pt-5">
+          <div className="flex flex-col justify-center  items-center pt-5 ">
             <div className="bg-primary h-14 w-14 rounded-full flex justify-center items-center">
               <button onClick={() => setScreen("leaderboard")}>
                 {" "}
-                <img className="h-7 w-7 " src={leaderboard} alt="" />
+                <img className="h-7 w-7 cursor-pointer " src={leaderboard} alt="" />
               </button>
             </div>
             <div className="pt-2"> Leaderboard</div>

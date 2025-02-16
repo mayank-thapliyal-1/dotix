@@ -3,13 +3,10 @@ import Arrow from "../assets/arrow.png";
 import _ from "underscore";
 import { FaTimes, FaCheck } from "react-icons/fa";
 
-const Test = ({ setScreen, quizData, quizOptions }) => {
+const Test = ({ setScreen, quizData, quizOptions,setRight,setWrong,right,wrong }) => {
   const [time, setTime] = useState(25);
   const [questionCount, setQuestionCount] = useState(0);
   const [selectedOption, setSelectedOption] = useState(-1);
-  const [right, setRight] = useState(0);
-  const [wrong, setWrong] = useState(0);
-
   const nextQuestion = () => {
     setSelectedOption(-1);
     if (questionCount === 9) setScreen("score");
