@@ -42,7 +42,13 @@ const Test = ({ setScreen, quizData, quizOptions,setRight,setWrong,right,wrong }
   }, [time]);
 
   if (quizData.length === 0) {
-    return <div>Loading...</div>;
+    return <div className="flex justify-center items-center h-screen">
+    <div className="w-10 h-10 border-t-8 border-secondary rounded-full flex justify-center items-center animate-spin">
+      <div className="p-4 w-5 h-5 border-b-4 border-[#1E293B] rounded-full flex justify-center items-center">
+        <div className=" p-2 w-3 h-2 border-t-4 border-[#F43F5E] rounded-full"></div>
+      </div>
+    </div>
+  </div>;
   }
 
   return (
