@@ -12,8 +12,10 @@ import Film from "../assets/icons/film.png";
 import Mythology from "../assets/icons/mythology.png";
 import Vehicle from "../assets/icons/car.png";
 import Anime from "../assets/icons/cloud.png";
+import { useNavigate } from "react-router-dom";
 
 const Home = ({ setQuizApi, setScreen }) => {
+const navigate  = useNavigate()
   const object = [
     {
       api: "https://opentdb.com/api.php?amount=10&category=12&difficulty=medium&type=multiple",
@@ -62,28 +64,28 @@ const Home = ({ setQuizApi, setScreen }) => {
     },
   ];
   return (
-    <div id="Home" className="h-screen">
-      <div className="h-[40%] bg-primary w-full relative overflow-hidden rounded-b-[3rem] p-6">
+    <div id="Home" className="">
+      <div className="h-[40%] bg-primary w-full relative overflow-auto rounded-b-[3rem] px-5 pb-5 pt-2 ">
         <div className="absolute bg-secondary rounded-full h-32 w-32 -top-12 left-24" />
         <div className="absolute bg-secondary rounded-full h-16 w-16 top-10 right-20" />
         <div className="absolute bg-secondary rounded-full h-32 w-32 top-20 -left-16" />
         <div className="absolute bg-secondary rounded-full h-32 w-32 top-28 -right-10" />
         <div className="z-[10] relative flex flex-col justify-between h-full">
-         ` {/* <div className="flex justify-between text-white items-center">
+          <nav className="flex justify-between text-white items-center">
             <span className="text-2xl font-medium">Hello Kirat</span>
             <div className="w-14 h-14 p-[3px] bg-white rounded-full">
-              <img src={profilePic} alt="profile pic" />
+              <img src={profilePic} alt="profile pic" className=" cursor-pointer" onClick={()=>navigate("/profile")}/>
             </div>
-          </div>` */}
+          </nav>
           <div className="flex flex-col gap-6">
             <span className="text-gray-700 font-semibold ">Popular</span>
             <div className="grid grid-cols-3 gap-3">
               <div
                 onClick={() => {
-                  setScreen("test");
                   setQuizApi(
                     "https://opentdb.com/api.php?amount=10&category=17&difficulty=easy&type=multiple"
                   );
+                  navigate("/test");
                 }}
                 className="w-full sm:p-6 p-3 bg-white flex flex-col gap-3 rounded-2xl"
               >
@@ -94,10 +96,10 @@ const Home = ({ setQuizApi, setScreen }) => {
               </div>
               <div
                 onClick={() => {
-                  setScreen("test");
                   setQuizApi(
                     "https://opentdb.com/api.php?amount=10&category=23&difficulty=easy&type=multiple"
                   );
+                  navigate("/test");
                 }}
                 className="w-full p-3 sm:p-6 bg-white flex flex-col gap-3 rounded-2xl"
               >
@@ -108,10 +110,10 @@ const Home = ({ setQuizApi, setScreen }) => {
               </div>
               <div
                 onClick={() => {
-                  setScreen("test");
                   setQuizApi(
                     "https://opentdb.com/api.php?amount=10&category=21&difficulty=medium&type=multiple"
                   );
+                  navigate("/test");
                 }}
                 className="w-full p-4 sm:p-6 bg-white flex flex-col gap-3 rounded-2xl"
               >
@@ -128,15 +130,14 @@ const Home = ({ setQuizApi, setScreen }) => {
       <div>
         <div className="flex justify-between p-6">
           <div className=" font-bold text-lg">Explore</div>
-          <div>view all</div>
         </div>
         <div className="grid grid-cols-3 grid-rows-3 gap-2 px-8">
           {object.map((ob,item) => (
             <div
             key={item}
               onClick={() => {
-                setScreen("test");
                 setQuizApi(ob.api);
+                navigate("/test");
               }}
               className=" cursor-pointer w-full sm:p-6 p-3 flex flex-col items-center justify-center gap-3 rounded-2xl border-solid border-2 border-secondary"
             >

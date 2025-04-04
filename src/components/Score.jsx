@@ -6,8 +6,10 @@ import { MdOutlineReplay } from "react-icons/md";
 import leaderboard from "../assets/leaderboard.png";
 import arrow from "../assets/arrow.png";
 import React, { useState,useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-const Score = ({ setScreen,right,wrong,resetScores}) => {
+const Score = ({right,wrong,resetScores}) => {
+  const navigate = useNavigate();
   const [correct, setCorrect] = useState(right);
   const [wg,setWg] = useState(wrong);
 
@@ -34,7 +36,7 @@ const Score = ({ setScreen,right,wrong,resetScores}) => {
           <div className="absolute bg-secondary rounded-full h-32 w-32 top-28 -right-10" />
           <div className="relative -top-5 -left-16 ">
             {" "}
-            <button onClick={() => setScreen("home")}>
+            <button onClick={() => navigate("/home")}>
               {" "}
               <img src={arrow} alt="arrow" />
             </button>
@@ -90,7 +92,7 @@ const Score = ({ setScreen,right,wrong,resetScores}) => {
           <div className="flex flex-col justify-center  items-center pb-5">
             {" "}
             <div className=" text-white bg-secondary h-14 w-14 rounded-full  flex justify-center items-center  ">
-              <button onClick={() => setScreen("test")}>
+              <button onClick={() => navigate("/test")}>
                 {" "}
                 <MdOutlineReplay className="text-4xl cursor-pointer " />
               </button>
@@ -119,7 +121,7 @@ const Score = ({ setScreen,right,wrong,resetScores}) => {
           </div>
           <div className="flex flex-col justify-center  items-center pt-5 ">
             <div className="text-white bg-primary h-14 w-14 rounded-full  flex justify-center items-center">
-              <button onClick={() => setScreen("home")}>
+              <button onClick={() => navigate("/home")}>
                 <FaHome className="text-3xl cursor-pointer" />
               </button>
             </div>{" "}
@@ -127,7 +129,7 @@ const Score = ({ setScreen,right,wrong,resetScores}) => {
           </div>
           <div className="flex flex-col justify-center  items-center pt-5 ">
             <div className="bg-primary h-14 w-14 rounded-full flex justify-center items-center">
-              <button onClick={() => setScreen("leaderboard")}>
+              <button onClick={() => navigate("/leaderboard")}>
                 {" "}
                 <img className="h-7 w-7 cursor-pointer " src={leaderboard} alt="" />
               </button>

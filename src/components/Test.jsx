@@ -2,14 +2,16 @@ import React, { useEffect, useState } from "react";
 import Arrow from "../assets/arrow.png";
 import _ from "underscore";
 import { FaTimes, FaCheck } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
-const Test = ({ setScreen, quizData, quizOptions,setRight,setWrong,right,wrong }) => {
+const Test = ({ quizData, quizOptions,setRight,setWrong,right,wrong }) => {
+  const navigate = useNavigate();
   const [time, setTime] = useState(25);
   const [questionCount, setQuestionCount] = useState(0);
   const [selectedOption, setSelectedOption] = useState(-1);
   const nextQuestion = () => {
     setSelectedOption(-1);
-    if (questionCount === 9) setScreen("score");
+    if (questionCount === 9) navigate("/score");
     setQuestionCount(questionCount + 1);
     setTime(25);
   };
@@ -32,7 +34,7 @@ const Test = ({ setScreen, quizData, quizOptions,setRight,setWrong,right,wrong }
     if (time < 0) {
       setTime(25);
       if (questionCount === 9) {
-        setScreen("score");
+        navigate("/score")
         return;
       }
       setQuestionCount(questionCount + 1);
@@ -62,7 +64,7 @@ const Test = ({ setScreen, quizData, quizOptions,setRight,setWrong,right,wrong }
           <div>
             {" "}
             <div>
-              <button onClick={() => setScreen("home")}>
+              <button onClick={() => navigate("/home")}>
                 <img src={Arrow} alt="arrow" />
               </button>
             </div>

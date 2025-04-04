@@ -3,9 +3,10 @@ import Test from "./components/Test";
 import Score from "./components/Score";
 import Leaderboard from "./components/Leaderboard";
 import { useEffect, useState } from "react";
-
+import SignIn from "./components/SignIn";
+import Profile from "./components/Profile";
+import { BrowserRouter as Router , Routes,Route} from "react-router-dom";
 const App = ({}) => {
-  const [screen, setScreen] = useState("home");
   const [quizData, setQuizData] = useState([]);
   const [quizOptions, setQuizOptions] = useState([]);
   const [quizApi, setQuizApi] = useState("");
@@ -39,31 +40,27 @@ const App = ({}) => {
   }, [quizApi]);
 
   return (
-    <div className="">
-      {screen === "home" && (
-        <Home setQuizApi={setQuizApi} setScreen={setScreen} />
-      )}
-      {screen === "test" && (
-        <Test
+    <Router className="">
+      <Routes>
+        <Route path="/" element={<SignIn/>  }/>
+        <Route path="/profile" element={<Profile/>  }/>
+        <Route path="/home" element={ <Home setQuizApi={setQuizApi} /> }/>
+        <Route path="/test" element={ <Test
           quizData={quizData}
           quizOptions={quizOptions}
-          setScreen={setScreen}
           setRight={setRight}
           setWrong={setWrong}
           right={right}
           wrong={wrong}
-        />
-      )}
-      {screen === "score" && (
-        <Score
-          setScreen={setScreen}
+        /> }/>
+        <Route path="/score" element={<Score
           right={right}
           wrong={wrong}
           resetScores={resetScores}
-        />
-      )}
-      {screen === "leaderboard" && <Leaderboard setScreen={setScreen} />}
-    </div>
+        />}/>
+        <Route path="/leaderboard" element={<Leaderboard/>}/>
+      </Routes>
+    </Router>
   );
 };
 

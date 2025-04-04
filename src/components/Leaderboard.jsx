@@ -8,8 +8,10 @@ import five from "../assets/05.png";
 import six from "../assets/06.png";
 import seven from "../assets/07.png";
 import eighteen from "../assets/18.png";
+import { useNavigate } from "react-router-dom";
 
-const Leaderboard = ({ setScreen }) => {
+const Leaderboard = () => {
+  const navigate = useNavigate();
   const data = [
     { image: four, name: "Moni", point: "233pt" },
     { image: five, name: "Esha", point: "160pt" },
@@ -25,7 +27,7 @@ const Leaderboard = ({ setScreen }) => {
         <div className="absolute bg-secondary rounded-full h-32 w-32 top-28 -right-10" />
         <div>
           {" "}
-          <button onClick={() => setScreen("score")}>
+          <button onClick={() => navigate("/score")}>
             {" "}
             <img src={arrow} alt="arrow" />
           </button>
