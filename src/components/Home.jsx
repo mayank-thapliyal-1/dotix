@@ -1,5 +1,4 @@
 import React from "react";
-import profilePic from "../assets/profile.png";
 import shuttle from "../assets/shuttle.png";
 import basketball from "../assets/basketball.png";
 import pillar from "../assets/pillar.png";
@@ -14,8 +13,10 @@ import Vehicle from "../assets/icons/car.png";
 import Anime from "../assets/icons/cloud.png";
 import { useNavigate } from "react-router-dom";
 
-const Home = ({ setQuizApi, setScreen }) => {
+const Home = ({ setQuizApi}) => {
 const navigate  = useNavigate()
+ const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+ console.log(userInfo)
   const object = [
     {
       api: "https://opentdb.com/api.php?amount=10&category=12&difficulty=medium&type=multiple",
@@ -72,9 +73,10 @@ const navigate  = useNavigate()
         <div className="absolute bg-secondary rounded-full h-32 w-32 top-28 -right-10" />
         <div className="z-[10] relative flex flex-col justify-between h-full">
           <nav className="flex justify-between text-white items-center">
-            <span className="text-2xl font-medium">Hello Kirat</span>
-            <div className="w-14 h-14 p-[3px] bg-white rounded-full">
-              <img src={profilePic} alt="profile pic" className=" cursor-pointer" onClick={()=>navigate("/profile")}/>
+            <span className="text-2xl font-medium">Hello {userInfo.displayName}</span>
+            <div className="w-20 h-20  bg-white rounded-full">
+              
+              <img src={userInfo.photoURL} alt="profile pic" className=" object-cover cursor-pointer h-20 w-20 rounded-full" onClick={()=>navigate("/profile1")}/>
             </div>
           </nav>
           <div className="flex flex-col gap-6">

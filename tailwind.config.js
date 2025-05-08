@@ -9,7 +9,11 @@ export default {
       colors: {
         primary: "#FFC102",
         secondary: "#FFAD00"
-      }
+      },
+      fontFamily: {
+        poppins: ['Poppins', 'sans-serif'],
+      },
+
     },
   },
   plugins: [],

@@ -4,8 +4,9 @@ import Score from "./components/Score";
 import Leaderboard from "./components/Leaderboard";
 import { useEffect, useState } from "react";
 import SignIn from "./components/SignIn";
-import Profile from "./components/Profile";
+import Profile from "./components/ProfileSection/Profile";
 import { BrowserRouter as Router , Routes,Route} from "react-router-dom";
+import Profile1 from "./components/ProfileSection/Profile1";
 const App = ({}) => {
   const [quizData, setQuizData] = useState([]);
   const [quizOptions, setQuizOptions] = useState([]);
@@ -43,7 +44,8 @@ const App = ({}) => {
     <Router className="">
       <Routes>
         <Route path="/" element={<SignIn/>  }/>
-        <Route path="/profile" element={<Profile/>  }/>
+        <Route path="/profile1" element={<Profile1 />  }/>
+        <Route path="/profile" element={<Profile />  }/>
         <Route path="/home" element={ <Home setQuizApi={setQuizApi} /> }/>
         <Route path="/test" element={ <Test
           quizData={quizData}
