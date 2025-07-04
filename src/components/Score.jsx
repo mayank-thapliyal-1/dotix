@@ -5,17 +5,27 @@ import { FaHome } from "react-icons/fa";
 import { MdOutlineReplay } from "react-icons/md";
 import leaderboard from "../assets/leaderboard.png";
 import arrow from "../assets/arrow.png";
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  arrayUnion,
+  collection,
+  doc,
+  getDoc,
+  query,
+  serverTimestamp,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+import { db } from "../firebase";
 
-const Score = ({right,wrong,resetScores}) => {
+const Score = ({ resetScores, email }) => {
   const navigate = useNavigate();
-  const [correct, setCorrect] = useState(right);
-  const [wg,setWg] = useState(wrong);
-
+  const correct = parseInt(localStorage.getItem("quizcorrect")) || 0;
+  const wg = parseInt(localStorage.getItem("quizwrong")) || 0;
+  const time = parseInt(localStorage.getItem("totaltime")) || 0;
   const attempts = ((correct + wg) / 10) * 100;
-  const score = correct * 10;
-
+  const scores = correct * 10;
   useEffect(() => {
     // Reset scores after 1 second
     const timer = setTimeout(() => {
@@ -23,9 +33,56 @@ const Score = ({right,wrong,resetScores}) => {
     }, 1000);
 
     return () => clearTimeout(timer); // Cleanup timer
-  }, []); 
+  }, []);
 
+const getUserDocIdByEmail = async (email) => {
+  const usersRef = collection(db, "users");
+  const q = query(usersRef, where("email", "==", email));
+  const querySnapshot = await getDoc(q);
 
+  if (!querySnapshot.empty) {
+    const docSnap = querySnapshot.docs[0]; // get the first match
+    const userId = docSnap.id; // 🎯 This is your user.id (document ID)
+    console.log("User document ID:", userId);
+    return userId;
+  } else {
+    console.log("No user found with that email.");
+    return null;
+  }
+};
+  useEffect(() => {
+    const scoreupdation = async () => {
+      try {
+        const user = JSON.parse(localStorage.getItem("userInfo"));
+        const userId = await getUserDocIdByEmail(email);
+        const usersRef = doc(db, "users", userId);
+        //     const q = query(usersRef, where("username", "==", user.username));
+        const scoreRef = doc(db, "scores", userId);
+        const snapshotscore = await getDoc(scoreRef);
+        const snapshot = await getDoc(usersRef);
+
+        if (snapshot.exists()) {
+          const prev = snapshot.data();
+          await updateDoc(usersRef, {
+            score:prev.score + scores,
+            totalattempt:prev.totalattempt+1,
+          });
+        }
+        if (snapshotscore.exists()) {
+          await updateDoc(scoreRef, {
+            score: arrayUnion({
+              score: scores,
+              time: time,
+              timestamp: serverTimestamp(),
+            }),
+          });
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    scoreupdation();
+  }, []);
   return (
     <div>
       <div id="Score" className=" h-screen">
@@ -36,7 +93,7 @@ const Score = ({right,wrong,resetScores}) => {
           <div className="absolute bg-secondary rounded-full h-32 w-32 top-28 -right-10" />
           <div className="relative -top-5 -left-16 ">
             {" "}
-            <button onClick={() => navigate("/home")}>
+            <button onClick={() => navigate("/")}>
               {" "}
               <img src={arrow} alt="arrow" />
             </button>
@@ -49,7 +106,7 @@ const Score = ({right,wrong,resetScores}) => {
               </h1>
               <div className="flex justify-center items-center">
                 {" "}
-                <h1 className="text-primary font-bold text-3xl">{score}</h1>
+                <h1 className="text-primary font-bold text-3xl">{scores}</h1>
                 <h1 className="relative text-xl font-semibold text-primary top-2">
                   pt
                 </h1>{" "}
@@ -121,7 +178,7 @@ const Score = ({right,wrong,resetScores}) => {
           </div>
           <div className="flex flex-col justify-center  items-center pt-5 ">
             <div className="text-white bg-primary h-14 w-14 rounded-full  flex justify-center items-center">
-              <button onClick={() => navigate("/home")}>
+              <button onClick={() => navigate("/")}>
                 <FaHome className="text-3xl cursor-pointer" />
               </button>
             </div>{" "}
@@ -131,7 +188,11 @@ const Score = ({right,wrong,resetScores}) => {
             <div className="bg-primary h-14 w-14 rounded-full flex justify-center items-center">
               <button onClick={() => navigate("/leaderboard")}>
                 {" "}
-                <img className="h-7 w-7 cursor-pointer " src={leaderboard} alt="" />
+                <img
+                  className="h-7 w-7 cursor-pointer "
+                  src={leaderboard}
+                  alt=""
+                />
               </button>
             </div>
             <div className="pt-2"> Leaderboard</div>

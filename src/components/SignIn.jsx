@@ -20,6 +20,7 @@ const SignIn = () => {
     try {
       if (signUp) {
         const userRef = collection(db, "users");
+        const scoreRef = collection(db,"scores");
         const e = query(userRef, where("email", "==", email));
         const u = query(userRef, where("username", "==", username));
         const emailSnap = await getDocs(e);
@@ -40,13 +41,20 @@ const SignIn = () => {
         );
         const user = userCredential.user;
         // Add user to Firestore
+        const score =[];
+        await addDoc(scoreRef,{
+          email,
+          score,
+        })
         await addDoc(userRef, {
           uid: user.uid,
           username,
           email,
           photoUrl: "src/assets/profile.png",
+          score:0,
+          totalattempt:0,
         });
-        navigate("/profile");
+        navigate("/edit-profile");
         setError("");
         setComp("User created successfulluy!");
       } else {
@@ -66,7 +74,7 @@ const SignIn = () => {
               username: data.username,
             })
           );
-          navigate("/home");
+          navigate("/edit-profile");
         }
       }
     } catch (err) {

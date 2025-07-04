@@ -4,14 +4,21 @@ import _ from "underscore";
 import { FaTimes, FaCheck } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
-const Test = ({ quizData, quizOptions,setRight,setWrong,right,wrong }) => {
+const Test = ({ quizData, quizOptions, setRight, setWrong, right, wrong }) => {
   const navigate = useNavigate();
   const [time, setTime] = useState(25);
+  const [startTime] = useState(Date.now());
   const [questionCount, setQuestionCount] = useState(0);
   const [selectedOption, setSelectedOption] = useState(-1);
   const nextQuestion = () => {
     setSelectedOption(-1);
-    if (questionCount === 9) navigate("/score");
+    if (questionCount === 9) {
+      localStorage.setItem("quizcorrect", right);
+      localStorage.setItem("quizwrong", wrong);
+      const totaltime = (Date.now() - startTime) / 1000;
+      localStorage.setItem("totaltime", totaltime);
+      navigate("/score");
+    }
     setQuestionCount(questionCount + 1);
     setTime(25);
   };
@@ -34,7 +41,7 @@ const Test = ({ quizData, quizOptions,setRight,setWrong,right,wrong }) => {
     if (time < 0) {
       setTime(25);
       if (questionCount === 9) {
-        navigate("/score")
+        navigate("/score");
         return;
       }
       setQuestionCount(questionCount + 1);
@@ -44,13 +51,15 @@ const Test = ({ quizData, quizOptions,setRight,setWrong,right,wrong }) => {
   }, [time]);
 
   if (quizData.length === 0) {
-    return <div className="flex justify-center items-center h-screen">
-    <div className="w-10 h-10 border-t-8 border-secondary rounded-full flex justify-center items-center animate-spin">
-      <div className="p-4 w-5 h-5 border-b-4 border-[#1E293B] rounded-full flex justify-center items-center">
-        <div className=" p-2 w-3 h-2 border-t-4 border-[#F43F5E] rounded-full"></div>
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="w-10 h-10 border-t-8 border-secondary rounded-full flex justify-center items-center animate-spin">
+          <div className="p-4 w-5 h-5 border-b-4 border-[#1E293B] rounded-full flex justify-center items-center">
+            <div className=" p-2 w-3 h-2 border-t-4 border-[#F43F5E] rounded-full"></div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>;
+    );
   }
 
   return (

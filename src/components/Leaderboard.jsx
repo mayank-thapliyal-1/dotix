@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import one from "../assets/01.png";
 import two from "../assets/02.png";
 import three from "../assets/03.png";
@@ -9,15 +9,38 @@ import six from "../assets/06.png";
 import seven from "../assets/07.png";
 import eighteen from "../assets/18.png";
 import { useNavigate } from "react-router-dom";
+import { collection, doc, getDocs } from "firebase/firestore";
+import { db } from "../firebase";
 
 const Leaderboard = () => {
   const navigate = useNavigate();
+     const arr =[];
   const data = [
     { image: four, name: "Moni", point: "233pt" },
     { image: five, name: "Esha", point: "160pt" },
     { image: six, name: "Kaosar", point: "140pt" },
     { image: seven, name: "Sam", point: "130pt" },
   ];
+  useEffect(() => {
+    const learderdata = async () => {
+      try {
+        const snapshot = await getDocs(collection(db, "users"));
+        const Data = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          const name = data.username;
+          const photo = data.photoUrl;
+          const score = data.email;
+          const all = {name,photo,score};
+          arr.push(all);
+        });
+      } catch (error) {
+        console.log("this is the error" + error);
+      }
+      console.log(arr);
+    };
+    learderdata();
+  }, []);
+
   return (
     <div className="h-screen">
       <div className="h-[51%] bg-primary w-full relative overflow-hidden rounded-b-[3rem] p-8">
@@ -52,18 +75,18 @@ const Leaderboard = () => {
             <img className="h-14 w-14 mt-6" src={three} alt="" />
           </div>
           <div className="flex mb-3 gap-2 justify-center">
-          <div className="flex flex-col items-center bg-[#D8A800] py-0 px-4 pb-8 -rotate-[25deg] ">
-            <h1 className="text-[4rem] text-white font-extrabold py-0">2</h1>
-            <p className="text-white ">442pt</p>
-          </div>
-          <div className="flex flex-col items-center bg-[#D8A800] pt-1 px-4 z-[1] h-[10rem]">
-            <h1 className="text-[4rem] text-white font-extrabold">1</h1>
-            <p className="text-white">443pt</p>
-          </div>
-          <div className="flex flex-col items-center bg-[#D8A800] px-4 py-1  rotate-[25deg]">
-            <h1 className="text-[4rem] text-white font-extrabold">3</h1>
-            <p className="text-white ]">433pt</p>
-          </div>
+            <div className="flex flex-col items-center bg-[#D8A800] py-0 px-4 pb-8 -rotate-[25deg] ">
+              <h1 className="text-[4rem] text-white font-extrabold py-0">2</h1>
+              <p className="text-white ">442pt</p>
+            </div>
+            <div className="flex flex-col items-center bg-[#D8A800] pt-1 px-4 z-[1] h-[10rem]">
+              <h1 className="text-[4rem] text-white font-extrabold">1</h1>
+              <p className="text-white">443pt</p>
+            </div>
+            <div className="flex flex-col items-center bg-[#D8A800] px-4 py-1  rotate-[25deg]">
+              <h1 className="text-[4rem] text-white font-extrabold">3</h1>
+              <p className="text-white ]">433pt</p>
+            </div>
           </div>
         </div>
       </div>
@@ -74,7 +97,7 @@ const Leaderboard = () => {
             className="flex justify-between pr-7 py-2  items-center "
           >
             <div className="flex justify-between items-center px-7 gap-5 lg:gap-[25rem] p-2">
-              <p className=" font-light">{i+4}</p>
+              <p className=" font-light">{i + 4}</p>
               <img className=" h-14 w-14" src={d.image} alt="moni" />
               {d.name}
             </div>
