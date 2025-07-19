@@ -12,14 +12,15 @@ import {
   collection,
   doc,
   getDoc,
+  getDocs,
   query,
-  serverTimestamp,
   updateDoc,
   where,
 } from "firebase/firestore";
-import { db } from "../firebase";
+import { auth, db } from "../backend/firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
-const Score = ({ resetScores, email }) => {
+const Score = ({ resetScores }) => {
   const navigate = useNavigate();
   const correct = parseInt(localStorage.getItem("quizcorrect")) || 0;
   const wg = parseInt(localStorage.getItem("quizwrong")) || 0;
@@ -27,62 +28,58 @@ const Score = ({ resetScores, email }) => {
   const attempts = ((correct + wg) / 10) * 100;
   const scores = correct * 10;
   useEffect(() => {
-    // Reset scores after 1 second
+    const find = () => {
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          scoreupdation(user.uid);
+          console.log("user uid", user.uid);
+        }
+      });
+    };
+    return () => find();
+  }, [find]);
+  useEffect(() => {
     const timer = setTimeout(() => {
       resetScores(); // This should update right & wrong in the parent component
     }, 1000);
 
     return () => clearTimeout(timer); // Cleanup timer
   }, []);
-
-const getUserDocIdByEmail = async (email) => {
-  const usersRef = collection(db, "users");
-  const q = query(usersRef, where("email", "==", email));
-  const querySnapshot = await getDoc(q);
-
-  if (!querySnapshot.empty) {
-    const docSnap = querySnapshot.docs[0]; // get the first match
-    const userId = docSnap.id; // 🎯 This is your user.id (document ID)
-    console.log("User document ID:", userId);
-    return userId;
-  } else {
-    console.log("No user found with that email.");
-    return null;
-  }
-};
-  useEffect(() => {
-    const scoreupdation = async () => {
-      try {
-        const user = JSON.parse(localStorage.getItem("userInfo"));
-        const userId = await getUserDocIdByEmail(email);
-        const usersRef = doc(db, "users", userId);
-        //     const q = query(usersRef, where("username", "==", user.username));
-        const scoreRef = doc(db, "scores", userId);
-        const snapshotscore = await getDoc(scoreRef);
-        const snapshot = await getDoc(usersRef);
-
-        if (snapshot.exists()) {
-          const prev = snapshot.data();
-          await updateDoc(usersRef, {
-            score:prev.score + scores,
-            totalattempt:prev.totalattempt+1,
-          });
-        }
-        if (snapshotscore.exists()) {
-          await updateDoc(scoreRef, {
-            score: arrayUnion({
-              score: scores,
-              time: time,
-              timestamp: serverTimestamp(),
-            }),
-          });
-        }
-      } catch (err) {
-        console.log(err);
+  const scoreupdation = async (userId) => {
+    try {
+      const usersRef = collection(db, "users");
+      const q = query(usersRef, where("uid", "==", userId));
+      const scoreRef = collection(db, "scores");
+      const p = query(scoreRef, where("uid", "==", userId));
+      const snapshotscore = await getDocs(p);
+      const snapshot = await getDocs(q);
+      if (!snapshot.empty) {
+        const userDoc = snapshot.docs[0];
+        const userDocRef = doc(db, "users", userDoc.id);
+        const prev = userDoc.data();
+        console.log("userdata =>", prev);
+        await updateDoc(userDocRef, {
+          score: prev.score + scores,
+          totalattempt: prev.totalattempt + 1,
+        });
       }
-    };
-    scoreupdation();
-  }, []);
+      if (!snapshotscore.empty) {
+        console.log("userdata score=>", snapshotscore.docs[0]);
+        const scoreDoc = snapshotscore.docs[0];
+        const scoreDocRef = doc(db, "scores", scoreDoc.id);
+        console.log("scoredata", scoreDoc.data());
+        await updateDoc(scoreDocRef, {
+          score: arrayUnion({
+            score: scores,
+            time: time,
+            timestamp: new Date().toISOString(),
+          }),
+        });
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return (
     <div>
       <div id="Score" className=" h-screen">

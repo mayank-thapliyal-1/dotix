@@ -176,9 +176,9 @@ const Home = ({ setQuizApi }) => {
                 setQuizApi(ob.api);
                 navigate("/test");
               }}
-              className=" group cursor-pointer w-full sm:p-6 p-3 flex flex-col items-center justify-center gap-3 rounded-2xl border-solid border-2 border-secondary hover:scale-105 hover:shadow-lg"
+              className=" group cursor-pointer w-full  sm:p-6 p-3 flex flex-col items-center justify-center gap-3 rounded-2xl border-solid border-2 border-secondary hover:scale-105 hover:shadow-lg hover:bg-blue-500 hover:border-blue-500 group"
             >
-              <span className=" text-gray-700 font-semibold ">{ob.topic}</span>
+              <span className=" text-gray-700 font-semibold group-hover:text-white ">{ob.topic}</span>
               <span className=" h-14  flex justify-center">
                 <img
                   className=" h-11 sm:h-16 object-fill "

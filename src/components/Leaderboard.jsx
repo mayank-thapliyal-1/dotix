@@ -10,7 +10,7 @@ import seven from "../assets/07.png";
 import eighteen from "../assets/18.png";
 import { useNavigate } from "react-router-dom";
 import { collection, doc, getDocs } from "firebase/firestore";
-import { db } from "../firebase";
+import { db } from "../backend/firebase";
 
 const Leaderboard = () => {
   const navigate = useNavigate();

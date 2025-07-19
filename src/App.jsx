@@ -8,7 +8,7 @@ import Profile from "./components/ProfileSection/Profile";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Profile1 from "./components/ProfileSection/Profile1";
 import EditProfile from "./components/ProfileSection/EditProfile";
-import { auth, db } from "./firebase.js";
+import { auth, db } from "./backend/firebase.js";
 import { onAuthStateChanged } from "firebase/auth";
 import {
   collection,

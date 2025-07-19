@@ -16,7 +16,7 @@ import profileImg13 from "../../assets/profile-icons/2d-image1.jpg";
 import profileImg14 from "../../assets/profile-icons/profile2.jpeg";
 import profileImg15 from "../../assets/profile-icons/profile3.jpeg";
 import { MdEdit } from "react-icons/md";
-import { auth, db } from "../../firebase.js";
+import { auth, db } from "../../backend/firebase.js";
 import { updateDoc, doc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 const EditProfile = ({

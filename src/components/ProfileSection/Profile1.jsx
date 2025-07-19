@@ -9,7 +9,7 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
-import { auth, db } from "../../firebase.js";
+import { auth, db } from "../../backend/firebase.js";
 import Profile from "./Profile.jsx";
 import EditProfile from "./EditProfile.jsx";
 import LeftBar from "./LeftBar.jsx";

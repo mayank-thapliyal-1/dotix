@@ -73,7 +73,7 @@ const Test = ({ quizData, quizOptions, setRight, setWrong, right, wrong }) => {
           <div>
             {" "}
             <div>
-              <button onClick={() => navigate("/home")}>
+              <button onClick={() => navigate("/")}>
                 <img src={Arrow} alt="arrow" />
               </button>
             </div>

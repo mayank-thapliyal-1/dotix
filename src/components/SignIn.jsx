@@ -2,8 +2,8 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
-import { collection, query, where, getDocs, addDoc } from "firebase/firestore";
-import { auth, db } from "../firebase.js";
+import { collection, query, where, getDocs, addDoc, setDoc } from "firebase/firestore";
+import { auth, db } from "../backend/firebase.js";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -42,11 +42,12 @@ const SignIn = () => {
         const user = userCredential.user;
         // Add user to Firestore
         const score =[];
-        await addDoc(scoreRef,{
+        await setDoc(scoreRef,{
+          uid: user.uid,
           email,
           score,
         })
-        await addDoc(userRef, {
+        await setDoc(userRef, {
           uid: user.uid,
           username,
           email,
@@ -54,6 +55,14 @@ const SignIn = () => {
           score:0,
           totalattempt:0,
         });
+         localStorage.setItem(
+            "userInfo",
+            JSON.stringify({
+              displayName: data.Displayname,
+              photoURL: data.photoUrl,
+              username: data.username,
+            })
+          );
         navigate("/edit-profile");
         setError("");
         setComp("User created successfulluy!");
@@ -74,7 +83,7 @@ const SignIn = () => {
               username: data.username,
             })
           );
-          navigate("/edit-profile");
+          navigate("/");
         }
       }
     } catch (err) {
