@@ -1,23 +1,30 @@
-import React from "react";
-import shuttle from "../assets/shuttle.png";
-import basketball from "../assets/basketball.png";
-import pillar from "../assets/pillar.png";
-import Music from "../assets/icons/music-player.png";
-import Books from "../assets/icons/book.png";
-import Boardsgame from "../assets/icons/dice.png";
-import Animal from "../assets/icons/animal.png";
-import Math from "../assets/icons/math.png";
-import Film from "../assets/icons/film.png";
-import Mythology from "../assets/icons/mythology.png";
-import Vehicle from "../assets/icons/car.png";
-import Anime from "../assets/icons/cloud.png";
+import React, { useEffect, useState } from "react";
+import shuttle from "../assets/icons/shuttle.svg";
+import basketball from "../assets/icons/basketball.svg";
+import pillar from "../assets/icons/pillar.svg";
+import Music from "../assets/icons/music-player.svg";
+import Books from "../assets/icons/book.svg";
+import Boardsgame from "../assets/icons/dice.svg";
+import Animal from "../assets/icons/animal.svg";
+import Math from "../assets/icons/math.svg";
+import Film from "../assets/icons/flim.svg";
+import Mythology from "../assets/icons/mythology.svg";
+import Vehicle from "../assets/icons/car.svg";
+import Anime from "../assets/icons/cloud.svg";
 import { HiMiniTrophy } from "react-icons/hi2";
-
 import { useNavigate } from "react-router-dom";
+import { useUSerStore } from "../backend/useUSerstore";
 
 const Home = ({ setQuizApi }) => {
   const navigate = useNavigate();
-  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  const [attempt, setAttempt] = useState(0);
+  const currentUser = useUSerStore((state) => state.currentUser);
+  const fetchUser = useUSerStore((state) => state.fetchUser);
+  useEffect(() => {
+    fetchUser();
+  }, []);
+  // console.log(currentUser," username =>");
+  // const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const object = [
     {
       api: "https://opentdb.com/api.php?amount=10&category=12&difficulty=medium&type=multiple",
@@ -64,39 +71,57 @@ const Home = ({ setQuizApi }) => {
       topic: "Anime",
       icon: Anime,
     },
+    {
+      api: "https://opentdb.com/api.php?amount=10&category=17&difficulty=easy&type=multiple",
+      topic: "Space",
+      icon: shuttle,
+    },
+    {
+      api: "https://opentdb.com/api.php?amount=10&category=23&difficulty=easy&type=multiple",
+      topic: "History",
+      icon: pillar,
+    },
+    {
+      api: "https://opentdb.com/api.php?amount=10&category=17&difficulty=easy&type=multiple",
+      topic: "sport",
+      icon: basketball,
+    },
   ];
+  if (!currentUser) {
+    <div>loading...</div>;
+  }
   return (
-    <div id="Home" className="">
-      <div className="h-[40%] bg-primary w-full relative overflow-auto rounded-b-[2rem] px-5 pb-5 pt-2 ">
-        <div className="absolute bg-secondary rounded-full h-32 w-32 -top-12 left-24 " />
-        <div className="absolute bg-secondary rounded-full h-16 w-16 top-10 right-20" />
-        <div className="absolute bg-secondary rounded-full h-32 w-32 top-20 -left-16" />
-        <div className="absolute bg-secondary rounded-full h-32 w-32 top-28 -right-10" />
+    <div id="Home" className="bg-primary pt-2 font-mono">
+      <div className="h-[40%]  w-full relative overflow-auto  px-5 pb-3 ">
         <div className="z-[10] relative flex flex-col justify-between h-full">
-          <nav className="flex justify-between text-white items-center">
-            {userInfo ? (
+          <nav className="flex justify-between text-white items-center py-2">
+            {currentUser ? (
               <span className="text-2xl font-medium">
-                Hello {userInfo.displayName}
+                Hello {currentUser.data[0].Firstname}
               </span>
             ) : (
               <span></span>
             )}
 
-            <div className=" flex items-center justify-between gap-6 ">
+            <div className=" flex items-center justify-between gap-10 ">
               <HiMiniTrophy
-                className=" h-14 w-14 rounded-full p-2 bg-orange-600 cursor-pointer text-secondary hover:scale-105 hover:bg-orange-700"
-                onClick={() => navigate("/leaderboard")}
+                className=" h-14 w-14 rounded-full p-2 bg-[#dcd9d5]/50  text-yellow-500 hover:scale-105 hover:bg-[#dcd9d5]/60 cursor-pointer"
+                onClick={() =>
+                  currentUser == null
+                    ? alert("sign in. first")
+                    : navigate("/leaderboard")
+                }
               />
-              {userInfo ? (
+              {currentUser ? (
                 <img
-                  src={userInfo.photoURL}
+                  src={currentUser.photoUrl}
                   alt="profile pic"
                   className=" object-cover cursor-pointer h-16 w-16 rounded-full "
                   onClick={() => navigate("/profile1")}
                 />
               ) : (
                 <h1
-                  className="cursor-pointer text-2xl border-white rounded-lg mt-2 border-2 p-1 px-3 mr-3 hover:bg-blue-400 hover:border-blue-400 hover:scale-105"
+                  className="inline-flex items-center gap-2 text-xl rounded-2xl cursor-pointer backdrop-blur-xl shadow-secondary bg-secondary/30 border-[1px] hover:bg-secondary/70 hover:border-secondary/70 px-4 py-2 "
                   onClick={() => navigate("/signin")}
                 >
                   Log In
@@ -104,90 +129,36 @@ const Home = ({ setQuizApi }) => {
               )}
             </div>
           </nav>
-          <div className="flex flex-col gap-2">
-            <span className="text-gray-700 font-semibold ">Popular</span>
-            <div className="grid grid-cols-3 gap-3">
-              <div
-                onClick={() => {
-                  setQuizApi(
-                    "https://opentdb.com/api.php?amount=10&category=17&difficulty=easy&type=multiple"
-                  );
-                  navigate("/test");
-                }}
-                className="group w-full sm:p-6 p-3 bg-white flex flex-col gap-3 rounded-2xl hover:bg-blue-600 hover:shadow-xl"
-              >
-                <span className="group-hover:text-white group-hover:text-xl">
-                  Space
-                </span>
-                <span className=" h-14  flex justify-center">
-                  <img
-                    src={shuttle}
-                    className="h-16  p-2 object-cover"
-                    alt="shuttle"
-                  />
-                </span>
-              </div>
-              <div
-                onClick={() => {
-                  setQuizApi(
-                    "https://opentdb.com/api.php?amount=10&category=23&difficulty=easy&type=multiple"
-                  );
-                  navigate("/test");
-                }}
-                className="group w-full p-3 sm:p-6  bg-white hover:bg-blue-600 hover:shadow-xl  flex flex-col gap-3 rounded-2xl"
-              >
-                <span className="group-hover:text-white group-hover:text-xl">
-                  History
-                </span>
-                <span className="  sm:h-14 h-11  flex justify-center">
-                  <img src={pillar} className="h-16  p-2" alt="piller" />
-                </span>
-              </div>
-              <div
-                onClick={() => {
-                  setQuizApi(
-                    "https://opentdb.com/api.php?amount=10&category=21&difficulty=medium&type=multiple"
-                  );
-                  navigate("/test");
-                }}
-                className="group w-full p-4 sm:p-6 bg-white flex flex-col gap-3 rounded-2xl hover:bg-blue-600 hover:shadow-xl"
-              >
-                <span className="group-hover:text-white group-hover:text-xl">
-                  Sport
-                </span>
-                <span className="h-14 flex justify-center">
-                  <img src={basketball} className="h-16 p-2" alt="basketball" />
-                </span>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
       <div></div>
       <div>
-        <div className="flex justify-between p-2 ">
-          <h1 className=" font-bold text-lg">Explore</h1>
-        </div>
-        <div className="grid grid-cols-3 grid-rows-3 gap-6 px-8 pb-7">
-          {object.map((ob, item) => (
-            <div
-              key={item}
-              onClick={() => {
-                setQuizApi(ob.api);
-                navigate("/test");
-              }}
-              className=" group cursor-pointer w-full  sm:p-6 p-3 flex flex-col items-center justify-center gap-3 rounded-2xl border-solid border-2 border-secondary hover:scale-105 hover:shadow-lg hover:bg-blue-500 hover:border-blue-500 group"
-            >
-              <span className=" text-gray-700 font-semibold group-hover:text-white ">{ob.topic}</span>
-              <span className=" h-14  flex justify-center">
-                <img
-                  className=" h-11 sm:h-16 object-fill "
-                  src={ob.icon}
-                  alt="profile pic"
-                />
-              </span>
-            </div>
-          ))}
+        <div className="bg-[#efece6] rounded-t-[2rem]">
+          <h1 className=" pl-5 pt-2 ">Explore</h1>
+          <div className="grid grid-cols-3 grid-rows-3 gap-3 sm:gap-6 px-8 pb-7  pt-5">
+            {object.map((ob, item) => (
+              <div
+                key={item}
+                onClick={() => {
+                  setQuizApi(ob.api);
+                  localStorage.setItem("attempt", false);
+                  navigate("/test");
+                }}
+                className=" group cursor-pointer w-full  bg-white  sm:p-2 p-3 flex flex-col items-center justify-center gap-3 rounded-2xl border-solid border-2  hover:scale-101 hover:shadow-lg"
+              >
+                <span className=" text-gray-700 text-xs sm:text-lg font-thin ">
+                  {ob.topic}
+                </span>
+                <span className=" h-max  flex justify-center">
+                  <img
+                    className=" h-15 sm:h-20 object-fill "
+                    src={ob.icon}
+                    alt="profile pic"
+                  />
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>

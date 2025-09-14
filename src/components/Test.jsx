@@ -64,11 +64,11 @@ const Test = ({ quizData, quizOptions, setRight, setWrong, right, wrong }) => {
 
   return (
     <div id="Test" className=" h-screen">
-      <div className="h-[30%] bg-primary w-full relative overflow-hidden rounded-b-[2rem] p-8">
-        <div className="absolute bg-secondary rounded-full h-32 w-32 -top-12 left-24" />
+      <div className="h-[30%] bg-primary w-full relative overflow-hidden  p-8">
+        {/* <div className="absolute bg-secondary rounded-full h-32 w-32 -top-12 left-24" />
         <div className="absolute bg-secondary rounded-full h-16 w-16 top-10 right-20" />
         <div className="absolute bg-secondary rounded-full h-32 w-32 top-20 -left-16" />
-        <div className="absolute bg-secondary rounded-full h-32 w-32 top-28 -right-10" />
+        <div className="absolute bg-secondary rounded-full h-32 w-32 top-28 -right-10" /> */}
         <div className="z-[10] relative flex flex-col gap-48">
           <div>
             {" "}
@@ -138,19 +138,19 @@ const Test = ({ quizData, quizOptions, setRight, setWrong, right, wrong }) => {
           </div>
         </div>
       </div>
-      <div className=" mt-32 min-h-[20rem] relative flex flex-col gap-5 items-center">
+      <div className=" mt-32 min-h-[20rem] relative flex flex-col gap-5 sm:gap-7 items-center">
         {quizOptions[questionCount].map((option, i) => (
           <div
             onClick={() => optionClickHandler(i, option)}
             key={i}
-            className=" border-2 border-primary rounded-2xl py-2 gap-2 items-center w-72 flex justify-between px-4"
+            className=" border-2 border-primary rounded-2xl py-2 gap-2  items-center w-72 sm:w-[45rem] sm:h-12 flex justify-between px-4"
           >
             <span className="flex-grow">{option}</span>
             <div>
               {selectedOption !== -1 ? (
                 selectedOption === i ? (
                   quizData[questionCount].correct_answer === option ? (
-                    <div className="bg-primary w-5 h-5 flex justify-center items-center rounded-full border border-primary">
+                    <div className="bg-primary w-5  h-5 flex justify-center items-center rounded-full border border-primary">
                       <FaCheck className="text-white text-xs" />
                     </div>
                   ) : (
@@ -174,7 +174,7 @@ const Test = ({ quizData, quizOptions, setRight, setWrong, right, wrong }) => {
       </div>
       <div className="px-10 mt-5">
         <button
-          className="bg-primary py-2 w-full lg:w-[15rem] lg:ml-[35rem] rounded-xl font-semibold "
+          className="bg-primary text-white py-2 w-full lg:w-[15rem] lg:ml-[35rem] rounded-xl font-semibold "
           onClick={() => nextQuestion()}
         >
           {" "}

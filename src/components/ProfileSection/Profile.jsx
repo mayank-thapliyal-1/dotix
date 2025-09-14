@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 const Profile = ({ Profile, PhotoURL, email, Username, data }) => {
   const navigate = useNavigate();
+  
   console.log(data);
   return (
     <div
@@ -49,7 +50,7 @@ const Profile = ({ Profile, PhotoURL, email, Username, data }) => {
           </h1>
         </div>
         <button
-          className="bg-blue-400 font-white sm:p-5 p-2 text-base sm:text-xl text-white font-bold hover:bg-blue-600 rounded-lg"
+          className="bg-secondary/70 font-white sm:p-5 p-2 text-base sm:text-xl text-white font-bold hover:bg-secondary rounded-lg"
           onClick={() => navigate("/")}
         >
           Go Back Home

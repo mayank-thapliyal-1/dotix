@@ -19,8 +19,15 @@ import {
 } from "firebase/firestore";
 import { auth, db } from "../backend/firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import { useUSerStore } from "../backend/useUSerstore";
 
 const Score = ({ resetScores }) => {
+  const currentUser= useUSerStore((state)=>state.currentUser);
+  const fetchUser = useUSerStore((state)=>state.fetchUser);
+    useEffect(() => {
+      fetchUser();  
+    }, []);
+  const update = localStorage.getItem("attempt")==="true";
   const navigate = useNavigate();
   const correct = parseInt(localStorage.getItem("quizcorrect")) || 0;
   const wg = parseInt(localStorage.getItem("quizwrong")) || 0;
@@ -32,7 +39,7 @@ const Score = ({ resetScores }) => {
       onAuthStateChanged(auth, (user) => {
         if (user) {
           scoreupdation(user.uid);
-          console.log("user uid", user.uid);
+          // console.log("user uid", user.uid);
         }
       });
     };
@@ -53,7 +60,7 @@ const Score = ({ resetScores }) => {
       const p = query(scoreRef, where("uid", "==", userId));
       const snapshotscore = await getDocs(p);
       const snapshot = await getDocs(q);
-      if (!snapshot.empty) {
+      if (!snapshot.empty && update != true) {
         const userDoc = snapshot.docs[0];
         const userDocRef = doc(db, "users", userDoc.id);
         const prev = userDoc.data();
@@ -63,11 +70,11 @@ const Score = ({ resetScores }) => {
           totalattempt: prev.totalattempt + 1,
         });
       }
-      if (!snapshotscore.empty) {
-        console.log("userdata score=>", snapshotscore.docs[0]);
+      if (!snapshotscore.empty && update!=true) {
+        // console.log("userdata score=>", snapshotscore.docs[0]);
         const scoreDoc = snapshotscore.docs[0];
         const scoreDocRef = doc(db, "scores", scoreDoc.id);
-        console.log("scoredata", scoreDoc.data());
+        // console.log("scoredata", scoreDoc.data());
         await updateDoc(scoreDocRef, {
           score: arrayUnion({
             score: scores,
@@ -76,6 +83,7 @@ const Score = ({ resetScores }) => {
           }),
         });
       }
+      localStorage.setItem("attempt",true);
     } catch (err) {
       console.log(err);
     }
@@ -84,10 +92,10 @@ const Score = ({ resetScores }) => {
     <div>
       <div id="Score" className=" h-screen">
         <div className="h-[40%] bg-primary w-full relative overflow-hidden rounded-b-[3rem] px-24 py-12">
-          <div className="absolute bg-secondary rounded-full h-32 w-32 -top-12 left-24" />
-          <div className="absolute bg-secondary rounded-full h-16 w-16 top-10 right-20" />
-          <div className="absolute bg-secondary rounded-full h-32 w-32 top-20 -left-16" />
-          <div className="absolute bg-secondary rounded-full h-32 w-32 top-28 -right-10" />
+          <div className="absolute bg-secondary rounded-full h-32 w-32 -top-12 left-24 animate-pulse" />
+          <div className="absolute bg-secondary rounded-full h-16 w-16 top-10 right-20 animate-pulse" />
+          <div className="absolute bg-secondary rounded-full h-32 w-32 top-20 -left-16 animate-pulse" />
+          <div className="absolute bg-secondary rounded-full h-32 w-32 top-28 -right-10 animate-pulse" />
           <div className="relative -top-5 -left-16 ">
             {" "}
             <button onClick={() => navigate("/")}>
@@ -183,7 +191,7 @@ const Score = ({ resetScores }) => {
           </div>
           <div className="flex flex-col justify-center  items-center pt-5 ">
             <div className="bg-primary h-14 w-14 rounded-full flex justify-center items-center">
-              <button onClick={() => navigate("/leaderboard")}>
+              <button onClick={() =>(currentUser==null)?alert("login first"):navigate("/leaderboard")}>
                 {" "}
                 <img
                   className="h-7 w-7 cursor-pointer "

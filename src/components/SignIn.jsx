@@ -2,11 +2,12 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
-import { collection, query, where, getDocs, addDoc, setDoc } from "firebase/firestore";
+import { collection, query, where, getDocs, addDoc, setDoc,doc } from "firebase/firestore";
 import { auth, db } from "../backend/firebase.js";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import image  from "../assets/profile.png"
+import Logo from "../assets/logo.jpeg"
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,7 +21,6 @@ const SignIn = () => {
     try {
       if (signUp) {
         const userRef = collection(db, "users");
-        const scoreRef = collection(db,"scores");
         const e = query(userRef, where("email", "==", email));
         const u = query(userRef, where("username", "==", username));
         const emailSnap = await getDocs(e);
@@ -42,27 +42,20 @@ const SignIn = () => {
         const user = userCredential.user;
         // Add user to Firestore
         const score =[];
-        await setDoc(scoreRef,{
-          uid: user.uid,
-          email,
-          score,
-        })
-        await setDoc(userRef, {
-          uid: user.uid,
-          username,
-          email,
-          photoUrl: "src/assets/profile.png",
-          score:0,
-          totalattempt:0,
-        });
-         localStorage.setItem(
-            "userInfo",
-            JSON.stringify({
-              displayName: data.Displayname,
-              photoURL: data.photoUrl,
-              username: data.username,
-            })
-          );
+      await setDoc(doc(db, "scores", user.uid), {
+  uid: user.uid,
+  email,
+  score,
+});
+     await setDoc(doc(db, "users", user.uid), {
+      uid : user.uid,
+      username: username,
+      email: user.email,
+      photoUrl: {image},
+      score: 0,
+      totalattempt: 0,
+      data:[],
+    });
         navigate("/edit-profile");
         setError("");
         setComp("User created successfulluy!");
@@ -75,14 +68,6 @@ const SignIn = () => {
           console.log("run");
           const userDoc = querySnapshot.docs[0];
           const data = userDoc.data();
-          localStorage.setItem(
-            "userInfo",
-            JSON.stringify({
-              displayName: data.Displayname,
-              photoURL: data.photoUrl,
-              username: data.username,
-            })
-          );
           navigate("/");
         }
       }
@@ -94,7 +79,7 @@ const SignIn = () => {
   return (
     <div className="flex font-poppins overflow-hidden h-screen w-screen justify-between bg-slate-100 items-center ">
       <img
-        src="src/assets/Logo.jpeg"
+        src={Logo}
         className="hidden sm:block w-1/2 h-screen"
         alt="Logo"
       />

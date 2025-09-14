@@ -19,40 +19,45 @@ import { MdEdit } from "react-icons/md";
 import { auth, db } from "../../backend/firebase.js";
 import { updateDoc, doc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-const EditProfile = ({
-  username,
-  data,
-  setData,
-  image,
-  setImage,
-  photoUrl,
-  setPhotoUrl,
-  userDocId,
-  Profile,
-}) => {
+import { useUSerStore } from "../../backend/useUSerstore.js";
+const EditProfile = ({Profile}) => {
   //   const value = new Date(data[0].dob.seconds * 1000);
   // const formattedDob = value.toISOString().split("T")[0];
-  const [firstname, setFirstname] = useState(
-    data[0] != null || data[0] != undefined ? data[0].Firstname : ""
-  );
-  const [lastname, setLastname] = useState(
-    data[0] != null || data[0] != undefined ? data[0].Lastname : ""
-  );
-  const [Dob, setDob] = useState(
-    data[0] != null || data[0] != undefined ? data[0].Dob : ""
-  );
-  const [Phone, setPhone] = useState(
-    data[0] != null || data[0] != undefined ? data[0].Phone : ""
-  );
-  const [location, setLocation] = useState(
-    data[0] != null || data[0] != undefined ? data[0].Location : ""
-  );
-  const [gender, setGender] = useState(
-    data[0] != null || data[0] != undefined ? data[0].Gender : "Male");
-  const [profileimage, setProfileimage] = useState( photoUrl || profileImg);
+ const currentUser = useUSerStore((state) => state.currentUser);
+ const fetchUser = useUSerStore((state)=>state.fetchUser);
+  const [data, setData] = useState([]);
+  const [firstname, setFirstname] = useState("");
+  const [lastname, setLastname] = useState("");
+  const [Dob, setDob] = useState("");
+  const [Phone, setPhone] = useState("");
+  const [location, setLocation] = useState("");
+  const [gender, setGender] = useState("Male");
+  const [profileimage, setProfileimage] = useState(profileImg);
+  const [photoUrl, setPhotoUrl] = useState("");
+  const [image, setImage] = useState(null);
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const FileInputRef = useRef();
+   useEffect(() => {
+     fetchUser();  
+   }, []);
+    console.log(currentUser);
+    
+    useEffect(() => {
+    if (currentUser && currentUser.data) {
+      setData(currentUser.data);
+      setFirstname(currentUser.data[0]?.Firstname || "");
+      setLastname(currentUser.data[0]?.Lastname || "");
+      setDob(currentUser.data[0]?.Dob || "");
+      setPhone(currentUser.data[0]?.Phone || "");
+      setLocation(currentUser.data[0]?.Location || "");
+      setGender(currentUser.data[0]?.Gender || "Male");
+      setProfileimage(currentUser.photoUrl || profileImg);
+      setPhotoUrl(currentUser.photoUrl || "");
+    }
+  }, [currentUser]);
+  // const [profileimage, setProfileimage] = useState( currentUser.photoUrl || profileImg);
+  // const [photoUrl,setPhotoUrl]=useState(currentUser.photoURL);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -108,12 +113,16 @@ const EditProfile = ({
   };
   // Update Profile
   const UpdateProfile = async () => {
+      if (firstname.trim() === "") {
+        setError("Please provide a display name first");
+        return;
+      }
     try {
       if (!auth.currentUser) {
         throw new Error("User is not logged in");
       }
 
-      if (!userDocId) {
+      if (!currentUser.uid) {
         throw new Error("User Firestore document not found");
       }
 
@@ -126,23 +135,28 @@ const EditProfile = ({
           setPhotoUrl(uploadedUrl);
         }
       }
-      const userRef = doc(db, "users", userDocId);
+          const value = [
+        {
+          Firstname: firstname,
+          Lastname: lastname,
+          Dob: Dob,
+          Phone: Phone,
+          Location: location,
+          Gender: gender,
+        },
+      ];
+      const userRef = doc(db, "users",currentUser.uid);
       await updateDoc(userRef, {
         photoUrl: finalPhotoUrl,
-        username: username,
-        data: data,
+        username: currentUser.username,
+        data: value,
       });
-      console.log(data);
+      console.log("data=>",data);
       setPhotoUrl(finalPhotoUrl);
-      localStorage.setItem(
-        "userInfo",
-        JSON.stringify({
-          displayName: firstname,
-          photoURL: finalPhotoUrl,
-          username: username,
-        })
-      );
-       Profile == null || Profile == undefined ? navigate("/") : "";
+      alert("updated");
+       Profile == null || Profile == undefined ? 
+       navigate("/") 
+       : "";
     } catch (error) {
       console.log(error);
       alert(error.message);
@@ -195,35 +209,15 @@ const EditProfile = ({
       icon: `${profileImg15}`,
     },
   ];
-  const showvalue = () => {
-    try {
-      if (firstname.trim() === "") {
-        setError("Please provide a display name first");
-        return;
-      }
-      const value = [
-        {
-          Firstname: firstname,
-          Lastname: lastname,
-          Dob: Dob,
-          Phone: Phone,
-          Location: location,
-          Gender: gender,
-        },
-      ];
-      setData(value);
-      console.log("data = "+data);
-      UpdateProfile();
-    } catch (error) {
-      setError(error);
-    }
-  };
-
+  
+ if(currentUser==null){
+    return(
+      <div>loading....</div>
+    )}
   return (
     <div
-      className={`${
-        Profile ? "hidden" : "block"
-      } flex-2 flex items-center flex-col gap-10 w-full h-screen p-5 bg-[#FFFBF0]`}
+      className={` ${Profile?"hidden":"flex"}
+        flex-2  items-center flex-col gap-10 w-full h-screen p-5 bg-[#FFFBF0]`}
     >
       <div className="sm:flex hidden  justify-between py-2 px-4 shadow-lg rounded-lg w-full bg-white items-center  ">
         <h1>Edit Profie</h1>
@@ -296,7 +290,7 @@ const EditProfile = ({
           <legend>Username</legend>
           <input
             className="outline-none bg-transparent w-full"
-            value={username}
+            value={currentUser.username}
             readOnly
             type="text"
           />
@@ -349,7 +343,7 @@ const EditProfile = ({
           </div>
           <button
             className="hover:bg-amber-400 border-amber-400 border-2 text-amber-400 hover:text-white hover:shadow-lg duration-200 text-xl rounded-lg mt-2 px-4 py-3 "
-            onClick={showvalue}
+            onClick={UpdateProfile}
           >
             Save Changes
           </button>
