@@ -5,7 +5,7 @@ import { FaHome } from "react-icons/fa";
 import { MdOutlineReplay } from "react-icons/md";
 import leaderboard from "../assets/leaderboard.png";
 import arrow from "../assets/arrow.png";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   arrayUnion,
@@ -20,14 +20,17 @@ import {
 import { auth, db } from "../backend/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { useUSerStore } from "../backend/useUSerstore";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
 const Score = ({ resetScores }) => {
-  const currentUser= useUSerStore((state)=>state.currentUser);
-  const fetchUser = useUSerStore((state)=>state.fetchUser);
-    useEffect(() => {
-      fetchUser();  
-    }, []);
-  const update = localStorage.getItem("attempt")==="true";
+  const currentUser = useUSerStore((state) => state.currentUser);
+  const fetchUser = useUSerStore((state) => state.fetchUser);
+  const printref = useRef(null);
+  useEffect(() => {
+    fetchUser();
+  }, []);
+  const update = localStorage.getItem("attempt") === "true";
   const navigate = useNavigate();
   const correct = parseInt(localStorage.getItem("quizcorrect")) || 0;
   const wg = parseInt(localStorage.getItem("quizwrong")) || 0;
@@ -70,7 +73,7 @@ const Score = ({ resetScores }) => {
           totalattempt: prev.totalattempt + 1,
         });
       }
-      if (!snapshotscore.empty && update!=true) {
+      if (!snapshotscore.empty && update != true) {
         // console.log("userdata score=>", snapshotscore.docs[0]);
         const scoreDoc = snapshotscore.docs[0];
         const scoreDocRef = doc(db, "scores", scoreDoc.id);
@@ -83,13 +86,50 @@ const Score = ({ resetScores }) => {
           }),
         });
       }
-      localStorage.setItem("attempt",true);
+      localStorage.setItem("attempt", true);
     } catch (err) {
       console.log(err);
     }
   };
+  const GenreatePdf = async()=>{
+const element = printref.current;
+if(!element){
+  return;
+}
+const canvas = await html2canvas(element,{
+  scale:2,
+});
+const data = canvas.toDataURL("images/png");
+const doc = new jsPDF({
+  orientation:"portrait",
+  unit:"px",
+  format:"a4"
+})
+const imageproperties = doc.getImageProperties(data);
+const pdfWidth = doc.internal.pageSize.getWidth();
+const pdfHeight =(imageproperties.height*pdfWidth)/imageproperties.width;
+doc.addImage(data,'PNG',0,0,pdfWidth,pdfHeight);
+doc.save("result.pdf");
+  }
   return (
     <div>
+      <div ref = {printref} className="absolute p-3   z-0  flex flex-col gap-5  ">
+        <h1 className="font-bold text-blue-600 text-3xl">Quiz Result</h1>
+        <h2 className="text-red-500">
+          {" "}
+          Your Score : <span className="text-green-600">10 pt</span>{" "}
+        </h2>
+        <div className="flex flex-col gap-2 h-full">
+          <h2 className="font-semibold text-red-700">Summary</h2>
+          <ul>
+            <li>Compeletion:100%</li>
+            <li>Total Question:10</li>
+            <li>Coreect:1</li>
+            <li>wrong:9</li>
+          </ul>
+        </div>
+        <p className="text-green-500">Thank you for participating! ☺️ </p>
+      </div>
       <div id="Score" className=" h-screen">
         <div className="h-[40%] bg-primary w-full relative overflow-hidden rounded-b-[3rem] px-24 py-12">
           <div className="absolute bg-secondary rounded-full h-32 w-32 -top-12 left-24 animate-pulse" />
@@ -103,6 +143,7 @@ const Score = ({ resetScores }) => {
               <img src={arrow} alt="arrow" />
             </button>
           </div>
+
           <div className=" bg-white/30  h-40 w-40  lg:ml-[35rem] flex justify-center items-center rounded-full ">
             {" "}
             <div className=" bg-white rounded-full  h-32 w-32  flex flex-col justify-center items-center">
@@ -176,7 +217,7 @@ const Score = ({ resetScores }) => {
             <div className="pt-2">Share Score</div>
           </div>
           <div className="flex flex-col justify-center  items-center pt-5 ">
-            <div className="text-white bg-primary h-14 w-14 rounded-full  flex justify-center items-center">
+            <div className="text-white bg-primary h-14 w-14 rounded-full  flex justify-center items-center" onClick={GenreatePdf}>
               <FaFilePdf className="text-2xl cursor-pointer" />
             </div>
             <div className="pt-2">Genrate Pdf</div>
@@ -191,7 +232,13 @@ const Score = ({ resetScores }) => {
           </div>
           <div className="flex flex-col justify-center  items-center pt-5 ">
             <div className="bg-primary h-14 w-14 rounded-full flex justify-center items-center">
-              <button onClick={() =>(currentUser==null)?alert("login first"):navigate("/leaderboard")}>
+              <button
+                onClick={() =>
+                  currentUser == null
+                    ? alert("login first")
+                    : navigate("/leaderboard")
+                }
+              >
                 {" "}
                 <img
                   className="h-7 w-7 cursor-pointer "

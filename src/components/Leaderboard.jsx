@@ -117,17 +117,18 @@ const val = currentUser.totalattempt > 0
         </div>
       </div>
       <div className="z-10 w-[100%] h-[56%] overflow-x-auto flex flex-col  gap-2 rounded-xl overflow-hidden bg-secondary ">
-        <div className="grid grid-cols-4 sm:grid-cols-5 gap-x-1 sm:gap-x-5 pr-7 py-2 sm:py-5  items-center  border-b-[1px] border-white/60 px-4 ">
+        <div className="grid grid-cols-4 sm:grid-cols-5 gap-x-1 sm:gap-x-5 pr-7 py-2 sm:py-5  items-center   px-4 ">
           <h1 className="text-center">Rank</h1>
           <h1 className="text-center">Username</h1>
           <h1 className="hidden sm:block text-center">Accuracy</h1>
           <h1 className="text-center">Plays</h1>
           <h1 className="text-center">Points</h1>
         </div>
+        <div className="h-[73%] overflow-scroll border border-white/60">
         {data.map((d, i) => (
           <div
             key={i}
-            className="grid grid-cols-4 sm:grid-cols-5 gap-x-1 sm:gap-x-5 gap-y-0 pr-2 sm:pr-7 py-2   items-center  border-b-[1px] border-white/60  sm:px-5  overflow-hidden hover:shadow-sm hover:shadow-black cursor-pointer "
+            className="grid grid-cols-4 sm:grid-cols-5 gap-x-1 sm:gap-x-5 gap-y-0 pr-2 sm:pr-7 py-[10px]   items-center border-t-[1px]   border-b-[1px] border-white/60  sm:px-5  overflow-hidden hover:shadow-sm hover:shadow-black cursor-pointer "
           >
             <p className=" font-light text-center">{i + 1}</p>
             <div className="flex gap-2 items-center justify-center">
@@ -141,7 +142,7 @@ const val = currentUser.totalattempt > 0
             </p>
           </div>
         ))}
-
+</div>
         <div className=" grid grid-cols-5 items-center gap-5 px-5  pr-7 py-4 border fixed bottom-1 border-t-2 w-full rounded-xl bg-secondary z-50 shadow-lg shadow-black hover:scale-[1.001]">
           <p className="font-light text-center">
             {data.findIndex((user) => user.name === currentUser.username) + 1}

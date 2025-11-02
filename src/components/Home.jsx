@@ -14,17 +14,16 @@ import Anime from "../assets/icons/cloud.svg";
 import { HiMiniTrophy } from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
 import { useUSerStore } from "../backend/useUSerstore";
-
+import { ToastContainer, toast } from "react-toastify";
 const Home = ({ setQuizApi }) => {
   const navigate = useNavigate();
   const [attempt, setAttempt] = useState(0);
   const currentUser = useUSerStore((state) => state.currentUser);
   const fetchUser = useUSerStore((state) => state.fetchUser);
+  const notify = () => toast.info("Login First");
   useEffect(() => {
     fetchUser();
   }, []);
-  // console.log(currentUser," username =>");
-  // const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const object = [
     {
       api: "https://opentdb.com/api.php?amount=10&category=12&difficulty=medium&type=multiple",
@@ -102,16 +101,26 @@ const Home = ({ setQuizApi }) => {
             ) : (
               <span></span>
             )}
+            {/* <button className="hover:bg-white hover:bg-opacity-50 px-6 py-2 rounded-md ">
+              Create room{" "}
+            </button>
+            <button
+              className="hover:bg-white hover:bg-opacity-50 px-6 py-2 rounded-md "
+              about="."
+              onClick={notify}
+            >
+              {" "}
+              Join room{" "}
+            </button> */}
 
-            <div className=" flex items-center justify-between gap-10 ">
-              <HiMiniTrophy
-                className=" h-14 w-14 rounded-full p-2 bg-[#dcd9d5]/50  text-yellow-500 hover:scale-105 hover:bg-[#dcd9d5]/60 cursor-pointer"
-                onClick={() =>
-                  currentUser == null
-                    ? alert("sign in. first")
-                    : navigate("/leaderboard")
-                }
-              />
+            <div className=" flex items-center justify-between gap-10 ">   
+                <HiMiniTrophy
+                  className=" h-14 w-14 rounded-full p-2 bg-[#dcd9d5]/50  text-yellow-500 hover:scale-105 hover:bg-[#dcd9d5]/60 cursor-pointer"
+                  onClick={() =>
+                    currentUser == null ? notify(): navigate("/leaderboard")
+                  }
+                />
+               
               {currentUser ? (
                 <img
                   src={currentUser.photoUrl}
@@ -131,7 +140,20 @@ const Home = ({ setQuizApi }) => {
           </nav>
         </div>
       </div>
-      <div></div>
+      <div>
+          <ToastContainer
+                  position="top-right"
+                  autoClose={3000}
+                  hideProgressBar={false}
+                  newestOnTop={false}
+                  closeOnClick={true}
+                  rtl={false}
+                  pauseOnFocusLoss
+                  draggable
+                  pauseOnHover
+                  theme="light"
+                />
+      </div>
       <div>
         <div className="bg-[#efece6] rounded-t-[2rem]">
           <h1 className=" pl-5 pt-2 ">Explore</h1>
@@ -161,6 +183,7 @@ const Home = ({ setQuizApi }) => {
           </div>
         </div>
       </div>
+     
     </div>
   );
 };

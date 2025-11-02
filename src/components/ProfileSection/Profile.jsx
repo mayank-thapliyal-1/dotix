@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import Progress from "./Progress";
 const Profile = ({ Profile, PhotoURL, email, Username, data }) => {
   const navigate = useNavigate();
   
@@ -48,6 +49,7 @@ const Profile = ({ Profile, PhotoURL, email, Username, data }) => {
           <h1 className="text-center font-semibold text-3xl underline uppercase mt-5 text-gray-700">
             Progress Report
           </h1>
+          <Progress/>
         </div>
         <button
           className="bg-secondary/70 font-white sm:p-5 p-2 text-base sm:text-xl text-white font-bold hover:bg-secondary rounded-lg"

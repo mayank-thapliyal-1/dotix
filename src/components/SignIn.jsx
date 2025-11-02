@@ -8,6 +8,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import image  from "../assets/profile.png"
 import Logo from "../assets/logo.jpeg"
+import { toast } from "react-toastify";
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,7 +16,9 @@ const SignIn = () => {
   const [username, setUsername] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
-
+ const notify =(data)=>toast.success("data",{
+  
+ })
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -56,6 +59,7 @@ const SignIn = () => {
       totalattempt: 0,
       data:[],
     });
+        notify("Created successfully");
         navigate("/edit-profile");
         setError("");
         setComp("User created successfulluy!");
@@ -68,6 +72,7 @@ const SignIn = () => {
           console.log("run");
           const userDoc = querySnapshot.docs[0];
           const data = userDoc.data();
+          notify("login succenfully")
           navigate("/");
         }
       }

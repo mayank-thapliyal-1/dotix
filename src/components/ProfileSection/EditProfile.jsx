@@ -20,11 +20,18 @@ import { auth, db } from "../../backend/firebase.js";
 import { updateDoc, doc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { useUSerStore } from "../../backend/useUSerstore.js";
-const EditProfile = ({Profile}) => {
+import { toast, ToastContainer } from "react-toastify";
+import PhoneInput from "react-phone-number-input";
+import "react-phone-number-input/style.css";
+
+const EditProfile = ({ Profile }) => {
   //   const value = new Date(data[0].dob.seconds * 1000);
   // const formattedDob = value.toISOString().split("T")[0];
- const currentUser = useUSerStore((state) => state.currentUser);
- const fetchUser = useUSerStore((state)=>state.fetchUser);
+  const notify = (data) => toast.info(data);
+  const success = (data) => toast.success(data);
+  const error = (data) => toast.error(data);
+  const currentUser = useUSerStore((state) => state.currentUser);
+  const fetchUser = useUSerStore((state) => state.fetchUser);
   const [data, setData] = useState([]);
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
@@ -35,15 +42,14 @@ const EditProfile = ({Profile}) => {
   const [profileimage, setProfileimage] = useState(profileImg);
   const [photoUrl, setPhotoUrl] = useState("");
   const [image, setImage] = useState(null);
-  const [error, setError] = useState("");
   const navigate = useNavigate();
   const FileInputRef = useRef();
-   useEffect(() => {
-     fetchUser();  
-   }, []);
-    console.log(currentUser);
-    
-    useEffect(() => {
+  useEffect(() => {
+    fetchUser();
+  }, []);
+  // console.log(currentUser);
+
+  useEffect(() => {
     if (currentUser && currentUser.data) {
       setData(currentUser.data);
       setFirstname(currentUser.data[0]?.Firstname || "");
@@ -56,15 +62,6 @@ const EditProfile = ({Profile}) => {
       setPhotoUrl(currentUser.photoUrl || "");
     }
   }, [currentUser]);
-  // const [profileimage, setProfileimage] = useState( currentUser.photoUrl || profileImg);
-  // const [photoUrl,setPhotoUrl]=useState(currentUser.photoURL);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setError("");
-      return () => clearTimeout(timer);
-    }, 5000);
-  }, []);
 
   // Image Upload
   const handleImageUpload = (e) => {
@@ -82,7 +79,7 @@ const EditProfile = ({Profile}) => {
       return photoUrl;
     }
     if (!image) {
-      alert("Please select an image first");
+      notify("Please select an image first");
       return null;
     }
 
@@ -98,28 +95,35 @@ const EditProfile = ({Profile}) => {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to upload image");
+        notify("Failed to upload image");
       }
 
       const data = await response.json();
-      alert("image upload succesfully");
+      success("image upload succesfully");
 
       return data.secure_url;
     } catch (error) {
       console.log("Cloudinary upload failed", error);
-      alert("Image upload failed");
+      error("Image upload failed");
       return null;
     }
   };
   // Update Profile
   const UpdateProfile = async () => {
-      if (firstname.trim() === "") {
-        setError("Please provide a display name first");
-        return;
-      }
+    if (firstname.trim() === "") {
+      error("Please provide a display name first");
+      return;
+    }
+    const date = new Date();
+    console.log(date, " ", Dob);
+    if (Dob <= date) {
+      console.log("hi");
+      error("Please fill correct date");
+      return;
+    }
     try {
       if (!auth.currentUser) {
-        throw new Error("User is not logged in");
+        error("User is not logged in");
       }
 
       if (!currentUser.uid) {
@@ -135,7 +139,7 @@ const EditProfile = ({Profile}) => {
           setPhotoUrl(uploadedUrl);
         }
       }
-          const value = [
+      const value = [
         {
           Firstname: firstname,
           Lastname: lastname,
@@ -145,22 +149,28 @@ const EditProfile = ({Profile}) => {
           Gender: gender,
         },
       ];
-      const userRef = doc(db, "users",currentUser.uid);
+      const userRef = doc(db, "users", currentUser.uid);
       await updateDoc(userRef, {
         photoUrl: finalPhotoUrl,
         username: currentUser.username,
         data: value,
       });
-      console.log("data=>",data);
+      // console.log("data=>",data);
       setPhotoUrl(finalPhotoUrl);
-      alert("updated");
-       Profile == null || Profile == undefined ? 
-       navigate("/") 
-       : "";
+      success("updated");
+      Profile == null || Profile == undefined ? navigate("/") : "";
     } catch (error) {
-      console.log(error);
-      alert(error.message);
+      error(error.message);
     }
+  };
+  const checker = (selectedDate) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset time part for accurate comparison
+
+    const chosenDate = new Date(selectedDate);
+    chosenDate.setHours(0, 0, 0, 0);
+
+    return chosenDate.getTime() >= today.getTime();
   };
   const ob = [
     {
@@ -209,14 +219,13 @@ const EditProfile = ({Profile}) => {
       icon: `${profileImg15}`,
     },
   ];
-  
- if(currentUser==null){
-    return(
-      <div>loading....</div>
-    )}
+
+  if (currentUser == null) {
+    return <div>loading....</div>;
+  }
   return (
     <div
-      className={` ${Profile?"hidden":"flex"}
+      className={` ${Profile ? "hidden" : "flex"}
         flex-2  items-center flex-col gap-10 w-full h-screen p-5 bg-[#FFFBF0]`}
     >
       <div className="sm:flex hidden  justify-between py-2 px-4 shadow-lg rounded-lg w-full bg-white items-center  ">
@@ -306,13 +315,15 @@ const EditProfile = ({Profile}) => {
         </fieldset>
         <fieldset className="p-2 border-[1px] focus:border-2 rounded-md border-slate-500 bg-slate-50">
           <legend>Phone</legend>
-          <input
-            className="outline-none bg-transparent w-full"
+          <PhoneInput
+      className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            defaultCountry="IN"
+            placeholder="Enter phone number"
             value={Phone}
-            onChange={(e) => setPhone(e.target.value)}
-            pattern="[0-9]{10}"
-            type="tel"
+            onChange={(e) => setPhone(e)}
+            maxLength={10}
           />
+       
         </fieldset>
         <span className="flex flex-col sm:flex-row justify-between w-full items-center pr-5 ">
           <div className="flex gap-3 items-center">
@@ -321,7 +332,13 @@ const EditProfile = ({Profile}) => {
               <input
                 className="outline-none bg-transparent w-full"
                 value={Dob}
-                onChange={(e) => setDob(e.target.value)}
+                onChange={(e) => {
+                  if (checker(e.target.value)) {
+                    error("Put a correct date");
+                  } else {
+                    setDob(e.target.value);
+                  }
+                }}
                 type="date"
               />
             </fieldset>
@@ -350,6 +367,7 @@ const EditProfile = ({Profile}) => {
         </span>
         <p className="text-rose-500 ">{error}</p>
       </div>
+      <ToastContainer autoClose={1000} />
     </div>
   );
 };
